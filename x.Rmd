@@ -1,0 +1,58 @@
+---
+title: "looking@data"
+author: "Katerina Bischel"
+date: "2025-03-03"
+output: html_document
+---
+
+```{r}
+# Load Data with Clean Column Names
+file_path <- "data/cleaned_bottle.xlsx"
+calcofi_data <- read_excel(file_path) %>% 
+  clean_names()  # Convert column names to snake_case
+```
+
+```{r}
+# Load Cast Data for Latitude & Longitude with Clean Column Names
+cast_file_path <- "data/cast_cleaned.xlsx"
+cast_data <- read_excel(cast_file_path) %>% 
+  clean_names() %>% 
+  select(sta_id, lat_dec, lon_dec) %>% 
+  drop_na()
+```
+
+```{r}
+unique(calcofi_data$sta_id)
+```
+```{r}
+unique(cast_data$sta_id)
+```
+
+```{r}
+# Merge Hydrographic Data with Cast Data
+selected_columns <- c("sta_id", "depthm", "t_deg_c", "salnty", "o2ml_l")
+calcofi_filtered <- calcofi_data %>% 
+  select(all_of(selected_columns)) %>% 
+  left_join(cast_data, by = "sta_id") %>% 
+  head(500)
+summary(calcofi_filtered)
+```
+```{r}
+str(calcofi_filtered)
+head(calcofi_filtered)
+```
+```{r}
+cast_data %>%
+  count(sta_id) %>%
+  filter(n > 1) %>%
+  arrange(desc(n))
+
+```
+```{r}
+cast_data <- cast_data %>% 
+  group_by(sta_id) %>%
+  slice(1) %>%
+  ungroup()
+
+```
+
