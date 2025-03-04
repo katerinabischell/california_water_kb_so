@@ -1,3 +1,5 @@
+
+
 library(shiny)
 library(shinydashboard)
 library(DT)
@@ -70,7 +72,7 @@ ui <- dashboardPage(
               fluidRow(
                 box(width = 12, title = "Introduction", status = "primary",
                     p("Welcome to the California Coastal Water Quality Explorer. This interactive application utilizes the CalCOFI Bottle Database to analyze oceanographic trends off the California coast."),
-                    p("The Bottle Database contains seawater sample data collected from CalCOFI stations, spanning from 1949 to the present. Key parameters include temperature, salinity, dissolved oxygen, chlorophyll-a, and various nutrients."),
+                    p("The Bottle Database contains seawater sample data collected from CalCOFI (California Cooperative Oceanic Fisheries Investigations) stations, spanning from 1949 to the present. Key parameters include temperature, salinity, dissolved oxygen, chlorophyll-a, and various nutrients."),
                     p("CalCOFI initially used Niskin, Nansen, and 'Wally' bottles for sample collection. Since 1993, the primary method has been the CTD-Rosette system, which allows for precise oceanographic measurements at various depths."),
                     p("This app provides tools for exploring hydrographic data through interactive maps, scatter plots, summary statistics, and advanced analyses."),
                     p("For more details, visit the official CalCOFI Bottle Database: ", a("CalCOFI Bottle Database", href="https://calcofi.org/data/oceanographic-data/bottle-database/", target="_blank"))
