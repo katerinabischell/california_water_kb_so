@@ -1,3 +1,5 @@
+
+
 library(shiny)
 library(shinydashboard)
 library(DT)
@@ -9,7 +11,7 @@ library(tidyr)    # Added for drop_na() function
 library(janitor)  # For automatic column name cleaning
 
 # Load Data with Clean Column Names
-file_path <- "data/cleaned_bottle.csv"
+file_path <- "data/cleaned_bottle2.csv"
 # Changed to use read.csv() for CSV files
 calcofi_data <- read.csv(file_path) %>% 
   clean_names()  # Convert column names to snake_case
@@ -59,7 +61,7 @@ ui <- dashboardPage(
     sidebarMenu(
       menuItem("Introduction", tabName = "intro", icon = icon("info-circle")),
       menuItem("Map Explorer", tabName = "map", icon = icon("map")),
-      menuItem("Temperature vs. Depth", tabName = "scatterplot", icon = icon("chart-line")),
+      menuItem("Data Visualizations", tabName = "scatterplot", icon = icon("chart-line")),
       menuItem("Data Table & Stats", tabName = "data", icon = icon("table")),
       menuItem("Advanced Analysis", tabName = "analysis", icon = icon("cogs"))
     )
@@ -69,26 +71,37 @@ ui <- dashboardPage(
       tabItem(tabName = "intro",
               fluidRow(
                 box(width = 12, title = "Introduction", status = "primary",
-                    p("Welcome to the California Coastal Water Quality Explorer. This interactive application utilizes the CalCOFI Bottle Database to analyze oceanographic trends off the California coast."),
-                    p("The Bottle Database contains seawater sample data collected from CalCOFI stations, spanning from 1949 to the present. Key parameters include temperature, salinity, dissolved oxygen, chlorophyll-a, and various nutrients."),
-                    p("CalCOFI initially used Niskin, Nansen, and 'Wally' bottles for sample collection. Since 1993, the primary method has been the CTD-Rosette system, which allows for precise oceanographic measurements at various depths."),
-                    p("This app provides tools for exploring hydrographic data through interactive maps, scatter plots, summary statistics, and advanced analyses."),
-                    p("For more details, visit the official CalCOFI Bottle Database: ", a("CalCOFI Bottle Database", href="https://calcofi.org/data/oceanographic-data/bottle-database/", target="_blank"))
+                    p("Welcome to the California Coastal Water Quality Explorer. This interactive application utilizes the CalCOFI (California Cooperative Oceanic Fisheries Investigations) Bottle Database to analyze oceanographic trends off the California coast. The database contains extensive seawater sample data collected from CalCOFI stations since 1949, providing insights into key oceanographic parameters such as temperature, salinity, dissolved oxygen, chlorophyll-a, and various nutrients. These data are essential for understanding long-term changes in the California Current Ecosystem (CCE) and assessing the impacts of climate variability and El Niño on marine life and coastal communities."),
+                    p("This app provides tools for exploring hydrographic data through interactive maps, scatter plots, summary statistics, and advanced analyses. For more details, visit the official CalCOFI Bottle Database: ", a("CalCOFI Bottle Database", href="https://calcofi.org/data/oceanographic-data/bottle-database/", target="_blank"))
                 )
               ),
               fluidRow(
                 box(width = 12, img(src = "images/coast.jpg", width = "100%", height = "auto"))  # Display coast.jpg image
               )
       ),
-      tabItem(tabName = "map",
-              fluidRow(
-                box(width = 12, leafletOutput("map"))
-              )
+      tabItem(
+        tabName = "map",
+        fluidRow(
+          box(
+            width = 12, 
+            leafletOutput("map"),
+            p("CalCOFI’s quarterly cruises span a broad area from north of San Francisco Bay to San Diego, reaching 300 miles (500 km) offshore. These cruises cover both state and national waters, as well as international waters. The CalCOFI survey grid includes a series of transect lines and stations designed to capture oceanographic data across California’s coastal waters. The grid’s flexibility accommodates different survey types, with core patterns that expand or contract depending on the season and research needs. The standard grid involves multiple transects and stations spaced between 20 and 40 nautical miles apart, with additional stations in coastal areas. Special patterns with more stations are sometimes used during specific surveys to monitor larger areas, including extending further north for winter and spring cruises."),
+            p("This extensive sampling effort is made possible through a partnership between NOAA’s Fisheries Service, the California Department of Fish & Wildlife, and Scripps Institution of Oceanography, allowing for comprehensive monitoring of ocean conditions and marine ecosystems."),
+          )
+        ),
+        fluidRow(
+          box(
+            width = 12, 
+            img(src = "images/CalCOFI_sampling.jpg", width = "100%", height = "auto")  # Display CalCOFI_sampling.jpg image
+          )
+        )  # Corrected this line, added the closing bracket here
       ),
-      tabItem(tabName = "scatterplot",
-              fluidRow(
-                box(width = 12, plotOutput("scatter_plot"))
-              )
+      tabItem(
+        tabName = "scatterplot",
+        fluidRow(
+          box(width = 12, plotOutput("scatter_plot")),  # Correct ID here
+          box(width = 12, plotOutput("scatter_plot_salinity_temp"))
+        )
       ),
       tabItem(tabName = "data",
               fluidRow(
@@ -134,6 +147,21 @@ server <- function(input, output, session) {
       labs(
         title = "Temperature vs. Depth",
         x = "Depth (m)",
+        y = "Temperature (°C)",
+        caption = "Data from CalCOFI Hydrographic Dataset"
+      ) +
+      theme_minimal() +
+      theme(legend.position = "bottom")
+  })
+  
+  # Render Salinity vs. Temperature Scatter Plot
+  output$scatter_plot_salinity_temp <- renderPlot({
+    ggplot(calcofi_filtered, aes(x = salnty, y = t_deg_c)) +
+      geom_point(color = "blue", alpha = 0.6) +
+      geom_smooth(method = "loess", color = "red", se = FALSE) +
+      labs(
+        title = "Salinity vs. Temperature",
+        x = "Salinity (UNITS)",
         y = "Temperature (°C)",
         caption = "Data from CalCOFI Hydrographic Dataset"
       ) +
