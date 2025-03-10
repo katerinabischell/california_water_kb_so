@@ -12,7 +12,7 @@ library(factoextra) # For PCA visualization
 library(shinythemes)  # Added for custom theme
 
 # Load Data with Clean Column Names
-file_path <- "data/cleaned_bottle2.csv"
+file_path <- "data/cleaned_bottle.csv"
 calcofi_data <- read.csv(file_path) %>% 
   clean_names()
 
