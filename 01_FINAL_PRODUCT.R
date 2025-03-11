@@ -12,7 +12,7 @@ library(factoextra) # For PCA visualization
 library(shinythemes)  # Added for custom theme
 
 # Load Data with Clean Column Names
-file_path <- "data/cleaned_bottle.csv"
+file_path <- "data/cleaned_bottle2.csv"
 calcofi_data <- read.csv(file_path) %>% 
   clean_names()
 
@@ -90,6 +90,8 @@ ui <- fluidPage(
                       ),
                       p("For more details, visit the official CalCOFI Bottle Database: ", a("CalCOFI Bottle Database", href="https://calcofi.org/data/oceanographic-data/bottle-database/", target="_blank")),
                       hr(),
+                      tags$img(src = "coast.jpg", 
+                               alt = "A image of the coast."),
                       p(strong("Created by: Katerina Bischel and Shane O'Brian"), align = "center")
                   )
                 )
@@ -98,6 +100,8 @@ ui <- fluidPage(
                 fluidRow(
                   box(width = 12, leafletOutput("map"),
                       p("CalCOFI’s quarterly cruises span a broad area from north of San Francisco Bay to San Diego, reaching out 500 km offshore. These cruises cover both state, national, and international waters. The CalCOFI survey grid includes a series of transect lines and stations designed; the grid’s flexibility accommodates different survey types, with core patterns that expand or contract depending on the season and research needs. The standard grid involves multiple transects and stations spaced between 20 and 40 nautical miles apart, with additional stations in coastal areas. Special patterns with more stations are sometimes used during specific surveys to monitor larger areas, including extending further north for winter and spring cruises."),
+                      tags$img(src = "CalCOFI_sampling.png", 
+                               alt = "A map of CalCOFI's sampling methodology."),
                       p("This extensive sampling effort is made possible through a partnership between NOAA’s Fisheries Service, the California Department of Fish & Wildlife, and Scripps Institution of Oceanography."),
                   ),
                 )
