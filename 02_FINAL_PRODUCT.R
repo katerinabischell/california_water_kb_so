@@ -296,19 +296,32 @@ server <- function(input, output, session) {
     })
   })
   
-  # MLR Analysis
+  # Multiple Linear Regression
   observeEvent(input$run_mlr, {
-    req(input$mlr_response, input$mlr_predictors)
+    req(input$mlr_response, input$mlr_predictors, length(input$mlr_predictors) >= 1)
     
-    # Create formula for MLR
-    formula <- as.formula(paste(input$mlr_response, "~", paste(input$mlr_predictors, collapse = "+")))
-    mlr_model <- lm(formula, data = calcofi_filtered)
+    # Make sure response isn't in predictors
+    valid_predictors <- setdiff(input$mlr_predictors, input$mlr_response)
     
+    # Create formula for regression
+    formula_text <- paste(input$mlr_response, "~", paste(valid_predictors, collapse = " + "))
+    
+    # Create data subset with complete cases for selected variables
+    mlr_data <- calcofi_filtered %>%
+      select(all_of(c(input$mlr_response, valid_predictors))) %>%
+      drop_na()
+    
+    # Run the regression
+    mlr_model <- lm(as.formula(formula_text), data = mlr_data)
+    
+    # Display regression summary
     output$mlr_summary <- renderPrint({
       summary(mlr_model)
     })
     
+    # Plot regression diagnostics
     output$mlr_plot <- renderPlot({
+      par(mfrow = c(2, 2))
       plot(mlr_model)
     })
   })
